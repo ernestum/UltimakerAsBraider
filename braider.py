@@ -153,8 +153,7 @@ class Braider:
 
         :param spool: The spool to grab.
         """
-        spool_pos = self.spools[spool]
-        if spool_pos is None:
+        if self.spools[spool] is None:
             if self._currently_grabbed_spool is None:
                 self.spools[spool] = self.position
                 self.engage_magnet()
@@ -168,7 +167,7 @@ class Braider:
                 print(f"Can't assign current position to new {spool} while holding {self._currently_grabbed_spool}!")
         else:
             self.disengage_magnet()
-            self.move_to(*spool_pos)
+            self.move_to(*self.spools[spool])
             self.engage_magnet()
             self.beep(440)
             print(f"grabbed {spool}")
