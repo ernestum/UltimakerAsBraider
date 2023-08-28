@@ -165,10 +165,12 @@ class Braider:
                 self.beep(660)
                 self.beep(660)
                 print(f"Can't assign current position to new {spool} while holding {self._currently_grabbed_spool}!")
-        else:
+        elif self.spools[spool] != self._currently_grabbed_spool:
             self.disengage_magnet()
             self.move_to(*self.spools[spool])
             self.engage_magnet()
             self.beep(440)
             print(f"grabbed {spool}")
             self._currently_grabbed_spool = spool
+        else:
+            pass  # Nothing to do, we already have the spool
