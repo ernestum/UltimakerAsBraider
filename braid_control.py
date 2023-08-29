@@ -25,6 +25,8 @@ This is useful to set the spool positions initially.
 
 If you press the number of a place that was never defined before, the current position
 of the printhead will be assigned to that place.
+
+To interrupt the pattern, press CTRL+C. Then press SPACE to continue or any other key to abort.
 """
 
 
@@ -129,8 +131,17 @@ if __name__ == "__main__":
             # If repeats is not in the config, we do one repeat
             for r in range(config.get("repeats", 1)):
                 for spool, place in config["pattern"]:
-                    brdr.grab(spool)
-                    brdr.move_to(*places[place])
+                    try:
+                        brdr.grab(spool)
+                        brdr.move_to(*places[place])
+                    except KeyboardInterrupt:
+                        print("SPACE to continue, any other key to abort")
+                        key = readchar.readkey()
+                        if key != readchar.key.SPACE:
+                            print("Aborting pattern")
+                            break
+                        else:
+                            print("Continuing pattern")
         elif key == readchar.key.F5:
             # Reload the pattern from config file
             print("Reloading pattern from config.yaml ...")
