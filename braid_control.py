@@ -17,6 +17,7 @@ Press a key to do something:
     - Press page up/down to engage/disengage the magnet
     - Press space to start braiding the pattern
     - Press delete to clear all places
+    - Press F5 to reload the pattern from config.yaml
     
 If you press the letter of a spool that was never grabbed before, the current position
 of the printhead will be assigned to that spool. 
@@ -130,5 +131,20 @@ if __name__ == "__main__":
                 for spool, place in config["pattern"]:
                     brdr.grab(spool)
                     brdr.move_to(*places[place])
+        elif key == readchar.key.F5:
+            # Reload the pattern from config file
+            print("Reloading pattern from config.yaml ...")
+            with open("config.yaml", "r") as fh:
+                loaded_config = yaml.load(fh, Loader=yaml.FullLoader)
+                try:
+                    check_config_for_inconsistencies(loaded_config)
+
+                    if config['spool_names'] != loaded_config['spool_names']:
+                        raise ValueError("Can't change the spool names when reloading!")
+
+                    config = loaded_config
+                    places = config["places"]
+                except ValueError as e:
+                    print(e.args)
         else:
             print(f"Did not understand: '{key}'")
