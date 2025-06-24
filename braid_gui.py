@@ -139,23 +139,15 @@ def gui():
     
     imgui.end()
 
-
-class DummySerial:
-    def write(self, data):
-        print(f"DummySerial write: {data}")
-
-    def readline(self):
-        return b'ok\n'
-
 if __name__ == "__main__":
-    # serial_connection = serial.Serial('/dev/ttyACM0', 250000)
+    serial_connection = serial.Serial('/dev/ttyACM0', 250000)
     time.sleep(2)  # Wait for the serial connection to be established
 
-    with open("config3.yaml", "r") as fh:
+    with open("config.yaml", "r") as fh:
         config = yaml.load(fh, Loader=yaml.FullLoader)
         check_config_for_inconsistencies(config)
 
-    brdr = Braider(DummySerial(), spool_names=config["spool_names"])
+    brdr = Braider(serial_connection, spool_names=config["spool_names"])
     places = config["places"]
     pattern_is_executing = False
     pattern_cursor = 0
